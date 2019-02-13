@@ -1,4 +1,4 @@
  build/
- models/
 
 .directory
+*.weights
