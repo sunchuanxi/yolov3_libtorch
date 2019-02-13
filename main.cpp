@@ -5,19 +5,20 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <unistd.h>
+#include <stdio.h>
 
 #include "Darknet.h"
 
 using namespace std;
 using namespace std::chrono;
 
-int main(int argc, const char *argv[])
-{
-    if (argc != 1)
-    {
-        std::cerr << "usage: yolo-app\n";
+int main(int argc, const char *argv[]) {
+    if (argc != 2) {
+        std::cerr << "usage: yolo-app <cam_id>\n";
         return -1;
     }
+
+    int cam_id = atoi(argv[1]);
 
     int class_num = 2;
     float confidence = 0.35;
@@ -25,13 +26,11 @@ int main(int argc, const char *argv[])
 
     torch::DeviceType device_type;
 
-    if (torch::cuda::is_available())
-    {
+    if (torch::cuda::is_available()) {
         device_type = torch::kCUDA;
         std::cout << "Running on GPU" << std::endl;
     }
-    else
-    {
+    else {
         device_type = torch::kCPU;
         std::cout << "Running on CPU" << std::endl;
     }
@@ -59,15 +58,14 @@ int main(int argc, const char *argv[])
 
     cv::Mat origin_image, resized_image;
 
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(cam_id);
 
     if (!cap.isOpened()) // check if we succeeded
         return -1;
 
     cv::namedWindow("Yolo V3 in C++", 1);
 
-    while (true)
-    {
+    while (true) {
         cap >> origin_image;
 
         cv::cvtColor(origin_image, resized_image, cv::COLOR_RGB2BGR);
@@ -94,12 +92,10 @@ int main(int argc, const char *argv[])
         // It should be known that it takes longer time at first time
         // std::cout << "inference taken : " << duration.count() << " ms" << endl;
 
-        if (result.dim() == 1)
-        {
+        if (result.dim() == 1) {
             // std::cout << "no object found" << endl;
         }
-        else
-        {
+        else {
             int obj_num = result.size(0);
 
             // std::cout << obj_num << " objects found" << endl;
@@ -114,8 +110,7 @@ int main(int argc, const char *argv[])
 
             auto result_data = result.accessor<float, 2>();
 
-            for (int i = 0; i < result.size(0); i++)
-            {
+            for (int i = 0; i < result.size(0); i++) {
                 // std::cout << result_data[i][7] << std::endl;
                 cv::rectangle(origin_image, cv::Point(result_data[i][1], result_data[i][2]), cv::Point(result_data[i][3], result_data[i][4]), cv::Scalar(0, 128 * (1 - result_data[i][7]), 255 * result_data[i][7]), 2 + 2 * (1 - result_data[i][7]), 1, 0);
             }
@@ -123,7 +118,7 @@ int main(int argc, const char *argv[])
             cv::imshow("Yolo V3 in C++", origin_image);
         }
 
-        cv::waitKey(30);
+        if (cv::waitKey(30) > 0) break;
     }
     std::cout << "Done" << endl;
 
