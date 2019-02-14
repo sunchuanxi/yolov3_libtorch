@@ -14,7 +14,7 @@ using namespace std::chrono;
 
 int main(int argc, const char *argv[]) {
     if (argc != 2) {
-        std::cerr << "usage: yolo-app <cam_id>\n";
+        std::cerr << "usage: yolo-cam <cam_id>\n";
         return -1;
     }
 
@@ -126,7 +126,7 @@ int main(int argc, const char *argv[]) {
 
         if (cv::waitKey(1) == 27) break;
     }
-    std::cout << "Done" << endl;
+    std::cout << "Done" << std::endl;
 
     return 0;
 }
