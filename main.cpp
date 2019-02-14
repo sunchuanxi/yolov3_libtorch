@@ -118,7 +118,7 @@ int main(int argc, const char *argv[]) {
             cv::imshow("Yolo V3 in C++", origin_image);
         }
 
-        if (cv::waitKey(30) > 0) break;
+        cv::waitKey(30);
     }
     std::cout << "Done" << endl;
 
