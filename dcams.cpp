@@ -30,11 +30,7 @@ int main()
 
     // Camera warmup - dropping several first frames to let auto-exposure stabilize
     rs2::frameset frames;
-    for (int i = 0; i < 30; i++)
-    {
-        // Wait for all configured streams to produce a frame
-        frames = pipe.wait_for_frames();
-    }
+    for (int i = 0; i < 30; i++) frames = pipe.wait_for_frames(); // Wait for all configured streams to produce a frame
 
     namedWindow("Color Image", WINDOW_AUTOSIZE);
     namedWindow("IR Image", WINDOW_AUTOSIZE);
