@@ -65,8 +65,13 @@ int main(int argc, const char *argv[]) {
 
     cv::namedWindow("Yolo V3 in C++", 1);
 
+    int acc_frame_cnt = 0;
+    int accumulated_duration = 0;
+    int acc_fps = 0;
+
     while (true) {
         cap >> origin_image;
+        acc_frame_cnt++;
 
         cv::cvtColor(origin_image, resized_image, cv::COLOR_RGB2BGR);
         cv::resize(resized_image, resized_image, cv::Size(input_image_size, input_image_size));
@@ -78,27 +83,28 @@ int main(int argc, const char *argv[]) {
         img_tensor = img_tensor.permute({0, 3, 1, 2});
         auto img_var = torch::autograd::make_variable(img_tensor, false).to(device);
 
-        // auto start = std::chrono::high_resolution_clock::now();
+        auto start = std::chrono::high_resolution_clock::now();
 
         auto output = net.forward(img_var);
 
         // filter result by NMS
         auto result = net.write_results(output, class_num, confidence, nms_thresh);
 
-        // auto end = std::chrono::high_resolution_clock::now();
+        auto end = std::chrono::high_resolution_clock::now();
 
-        // auto duration = duration_cast<milliseconds>(end - start);
+        auto duration = duration_cast<milliseconds>(end - start);
+        accumulated_duration += duration.count();
 
-        // It should be known that it takes longer time at first time
-        // std::cout << "inference taken : " << duration.count() << " ms" << endl;
+        if (accumulated_duration % 5000 == 0) {
+            acc_fps = (int)(((float)(acc_frame_cnt) / (float)(accumulated_duration)) * 1000.0);
+            std::cout << "average fps in last 5 seconds : " << acc_fps << endl;
 
-        if (result.dim() == 1) {
-            // std::cout << "no object found" << endl;
+            acc_frame_cnt = 0;
+            accumulated_duration = 0;
         }
-        else {
-            int obj_num = result.size(0);
 
-            // std::cout << obj_num << " objects found" << endl;
+        if (result.dim() != 1) {
+            int obj_num = result.size(0);
 
             float w_scale = float(origin_image.cols) / input_image_size;
             float h_scale = float(origin_image.rows) / input_image_size;
@@ -118,7 +124,7 @@ int main(int argc, const char *argv[]) {
             cv::imshow("Yolo V3 in C++", origin_image);
         }
 
-        cv::waitKey(30);
+        if (cv::waitKey(1) == 27) break;
     }
     std::cout << "Done" << endl;
 
