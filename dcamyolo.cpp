@@ -14,7 +14,6 @@ int main(int argc, const char *argv[]) {
         return -1;
     }
 
-
     // Configuration
     int fps = 30;
     int width = 640;
@@ -114,10 +113,10 @@ int main(int argc, const char *argv[]) {
         auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
         accumulated_duration += duration.count();
 
-        // Display FPS after every 5 seconds
-        if (accumulated_duration > 5000) {
+        // Display FPS after every few seconds
+        if (accumulated_duration > 2000) {
             acc_fps = (int)(((float)(acc_frame_cnt) / (float)(accumulated_duration)) * 1000.0);
-            std::cout << "average fps in last 5 seconds : " << acc_fps << endl;
+            std::cout << "average fps in last few seconds : " << acc_fps << endl;
 
             acc_frame_cnt = 0;
             accumulated_duration = 0;
