@@ -115,7 +115,7 @@ int main(int argc, const char *argv[]) {
         accumulated_duration += duration.count();
 
         // Display FPS after every 5 seconds
-        if (accumulated_duration % 5000 == 0) {
+        if (accumulated_duration > 5000) {
             acc_fps = (int)(((float)(acc_frame_cnt) / (float)(accumulated_duration)) * 1000.0);
             std::cout << "average fps in last 5 seconds : " << acc_fps << endl;
 
