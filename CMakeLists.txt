@@ -20,6 +20,12 @@ target_include_directories(dcam PRIVATE ${realsense_INCLUDE_DIR})
 target_link_libraries(dcam ${realsense2_LIBRARY} "${OpenCV_LIBS}")
 set_property(TARGET dcam PROPERTY CXX_STANDARD 11)
 
+add_executable(dcams dcams.cpp)
+include_directories(include ${realsense_INCLUDE_DIR})
+target_include_directories(dcams PRIVATE ${realsense_INCLUDE_DIR})
+target_link_libraries(dcams ${realsense2_LIBRARY} "${OpenCV_LIBS}")
+set_property(TARGET dcams PROPERTY CXX_STANDARD 11)
+
 add_executable(dcamyolo dcamyolo.cpp Darknet.cpp)
 include_directories(include ${realsense_INCLUDE_DIR})
 target_include_directories(dcamyolo PRIVATE ${realsense_INCLUDE_DIR})
