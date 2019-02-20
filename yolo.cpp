@@ -117,7 +117,6 @@ int main(int argc, const char *argv[]) {
             auto result_data = result.accessor<float, 2>();
 
             for (int i = 0; i < result.size(0); i++) {
-                // std::cout << result_data[i][7] << std::endl;
                 cv::rectangle(origin_image, cv::Point(result_data[i][1], result_data[i][2]), cv::Point(result_data[i][3], result_data[i][4]), cv::Scalar(0, 128 * (1 - result_data[i][7]), 255 * result_data[i][7]), 2 + 2 * (1 - result_data[i][7]), 1, 0);
             }
 
